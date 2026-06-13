@@ -28,7 +28,11 @@ object ChatService {
     }
 
     fun getChatMessages(chatId: Int): List<Message> {
-        return MessageService.getByChatId(chatId)
+        val res = MessageService.getByChatId(chatId)
+        if (res.isEmpty()) {
+            println("Нет сообщений")
+        }
+        return res
     }
 
     fun getUnreadChatsCount(): Int {
@@ -38,6 +42,10 @@ object ChatService {
     fun delete(id: Int): Int {
         chats.remove(getById(id))
         return 1
+    }
+
+    fun deleteMessage(messageId: Int): Int {
+        return MessageService.delete(messageId)
     }
 
     fun clear() {

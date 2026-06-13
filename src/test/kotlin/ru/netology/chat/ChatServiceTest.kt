@@ -70,6 +70,13 @@ class ChatServiceTest {
     }
 
     @Test
+    fun getChatMessagesWhenNoMessages() {
+        val chatId = chatService.create(Chat(userId = 1, otherUserId = 2))
+        val messages = chatService.getChatMessages(chatId)
+        assertEquals(0 , messages.size)
+    }
+
+    @Test
     fun getUnreadChatsCount() {
         chatService.create(Chat(userId = 1, otherUserId = 2))
         messageService.create(
@@ -117,5 +124,30 @@ class ChatServiceTest {
     @Test(expected = ChatNotFoundException::class)
     fun deleteWithException() {
         chatService.delete(1)
+    }
+
+    @Test
+    fun deleteMessage() {
+        chatService.create(Chat(userId = 1, otherUserId = 2))
+        messageService.create(
+            Message(
+                chatId = 1,
+                text = "text1",
+                userId = 1,
+                otherUserId = 2,
+                readStatus = ReadStatus.READ
+            )
+        )
+        messageService.create(
+            Message(
+                chatId = 1,
+                text = "text2",
+                userId = 1,
+                otherUserId = 2,
+                readStatus = ReadStatus.UNREAD
+            )
+        )
+        val code = chatService.deleteMessage(1)
+        assertEquals(1, code)
     }
 }
