@@ -21,18 +21,22 @@ object MessageService : CrudService<Message> {
     }
 
     override fun getById(id: Int): Message {
-        var res: Message? = null
+//        var res: Message? = null
+//
+//        for (message in messages) {
+//            if (message.id == id) {
+//                res = message
+//            }
+//        }
+//        return res ?: throw MessageNotFoundException("message not found with id $id")
 
-        for (message in messages) {
-            if (message.id == id) {
-                res = message
-            }
-        }
-        return res ?: throw MessageNotFoundException("message not found with id $id")
+        return messages.asSequence().filter { it.id == id }
+            .ifEmpty { throw MessageNotFoundException("message not found with id $id") }
+            .first()
     }
 
     fun getByChatId(chatId: Int): List<Message> {
-        return messages.filter { message: Message -> message.chatId == chatId }
+        return messages.asSequence().filter { it.chatId == chatId }.toList()
     }
 
     override fun getAll(): List<Message> {
