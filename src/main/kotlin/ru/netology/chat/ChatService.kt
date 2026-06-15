@@ -12,14 +12,18 @@ object ChatService {
     }
 
     fun getById(id: Int): Chat {
-        var res: Chat? = null
+//        var res: Chat? = null
+//
+//        for (note in chats) {
+//            if (note.id == id) {
+//                res = note
+//            }
+//        }
+//        return res ?: throw ChatNotFoundException("chat not found with id $id")
 
-        for (note in chats) {
-            if (note.id == id) {
-                res = note
-            }
-        }
-        return res ?: throw ChatNotFoundException("chat not found with id $id")
+        return chats.asSequence().filter { it.id == id }
+            .ifEmpty { throw ChatNotFoundException("chat not found with id $id") }
+            .first()
     }
 
     // Получить список чатов
@@ -36,7 +40,7 @@ object ChatService {
     }
 
     fun getUnreadChatsCount(): Int {
-        return chats.filter { getChatMessages(it.id).any { it.readStatus == ReadStatus.UNREAD } }.size
+        return chats.asSequence().filter { getChatMessages(it.id).any { it.readStatus == ReadStatus.UNREAD } }.count()
     }
 
     fun delete(id: Int): Int {
